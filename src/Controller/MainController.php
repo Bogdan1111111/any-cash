@@ -20,9 +20,6 @@ class MainController extends AbstractController
     public function __construct(HttpClientInterface $client)
     {
         $this->client = $client;
-
-        $dotenv = new Dotenv();
-        $dotenv->load(dirname(__DIR__, 2) . '/.env');
     }
     /**
      * @Route("/", name="main")
@@ -36,7 +33,7 @@ class MainController extends AbstractController
 			->add('submit', SubmitType::class, ['label' => 'Create Order'])
 			->getForm();
 
-        $form->handleRequest($request);print_r($this->getParameter('API_KEY'));
+        $form->handleRequest($request);
 
         if ($form->isSubmitted()){
             $form->getData();
@@ -75,8 +72,8 @@ class MainController extends AbstractController
 		    'headers' => [
 			    'Content-Type: application/json',
 			    'Content-Length: ' . strlen($jsonData),
-			    'x-merchant: ' . getenv('MERCHANT'),
-			    'x-signature: ' . $this->signData($this->getParameter('API_KEY'), $params, $utc_now),
+			    'x-merchant: ' . $_ENV['MERCHANT'],
+			    'x-signature: ' . $this->signData($_ENV['API_KEY'], $params, $utc_now),
 			    'x-utc-now-ms: ' . $utc_now
 		    ],
 	        'body' => $jsonData
